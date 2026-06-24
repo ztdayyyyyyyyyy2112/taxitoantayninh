@@ -32,7 +32,6 @@ export default function Footer() {
             <h5>Dịch vụ</h5>
             <ul>
               <li><a href="#services">Taxi nội thành</a></li>
-              <li><a href="#services">Taxi liên tỉnh</a></li>
               <li><a href="#services">Đưa đón sân bay</a></li>
               <li><a href="#services">Thuê xe theo giờ</a></li>
               <li><a href="#services">Xe cưới & sự kiện</a></li>
