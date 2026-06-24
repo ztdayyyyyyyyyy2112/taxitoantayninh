@@ -1,0 +1,100 @@
+.contact__inner {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.contact__info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.contact__info-block {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+.contact__info-block h4 {
+  font-size: .82rem;
+  font-weight: 700;
+  color: #8899aa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.contact__hotline {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--red);
+  line-height: 1.25;
+  margin-bottom: 4px;
+  text-decoration: none;
+}
+.contact__hotline--small { font-size: 1.1rem; }
+.contact__info-block p, .contact__info-block a {
+  font-size: .9rem;
+  color: #5a6b82;
+  line-height: 1.6;
+}
+.contact__info-block a:not(.contact__hotline) { color: var(--gold-dk); }
+
+.contact__panel {
+  padding: 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+.contact__panel-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.contact__panel-header p {
+  color: #5a6b82;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.contact__panel-body {
+  display: grid;
+  gap: 14px;
+}
+.contact__service-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e9eef4;
+}
+.contact__service-item span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.contact__service-item h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.contact__service-item p {
+  color: #5a6b82;
+  font-size: .9rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 860px) {
+  .contact__inner { grid-template-columns: 1fr; }
+  .contact__panel { padding: 22px; }
+}

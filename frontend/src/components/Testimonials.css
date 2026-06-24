@@ -1,0 +1,32 @@
+.review-card { padding: 24px; display: flex; flex-direction: column; }
+.review-card__stars { color: #f5a623; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 14px; }
+.review-card__text { font-size: .92rem; color: #4a5568; line-height: 1.7; flex: 1; margin-bottom: 20px; font-style: italic; }
+.review-card__author { display: flex; align-items: center; gap: 12px; }
+.review-card__avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), #2d4a7a);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.review-card__name { font-weight: 700; font-size: .9rem; color: var(--navy); }
+.review-card__role { font-size: .78rem; color: #8899aa; }
+
+.testi__nav { display: flex; align-items: center; gap: 16px; justify-content: center; }
+.testi__btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+  border: none;
+}
+.testi__btn:disabled { background: #ccc; cursor: not-allowed; }
+.testi__btn:not(:disabled):hover { background: var(--gold-dk); }
+.testi__nav span { font-weight: 600; color: var(--navy); }
