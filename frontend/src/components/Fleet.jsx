@@ -4,19 +4,34 @@ import './Fleet.css';
 const FLEET = [
   { 
     type: '4 Chỗ Sedan', 
-    models: 'Toyota Vios, Hyundai Accent', 
+    models: 'Toyota Vios, Hyundai Accent,...', 
     img: 'https://www.image2url.com/r2/default/images/1782303782068-080b8063-14ad-4fad-9efb-0abaef156852.png', // Đã thay bằng link ảnh của bạn
     features: ['Điều hòa 2 chiều', 'Cáp sạc USB', 'Định vị GPS', 'Camera hành trình'] 
   },
-  { type: '7 Chỗ MPV',  models: 'Toyota Innova, Mitsubishi Xpander', img: 'https://www.image2url.com/r2/default/images/1782303464530-3d7582c8-cc50-435c-8bbe-d5def80b8d4d.png', features: ['Ghế da cao cấp', 'Điều hòa tự động', 'Cốp rộng', 'Màn hình giải trí'] },
-  { type: 'Limousine VIP', models: 'Ford Tourneo, Hyundai Staria', img: 'https://www.image2url.com/r2/default/images/1782303575426-1048a77b-89d4-4d22-8bd1-0701510c567d.png', features: ['Ghế massage', 'WiFi riêng', 'Màn hình HD', 'Rèm che riêng tư'] },
+  { type: '7 Chỗ MPV',  models: 'Toyota Innova, Mitsubishi Xpander,...', img: 'https://www.image2url.com/r2/default/images/1782303464530-3d7582c8-cc50-435c-8bbe-d5def80b8d4d.png', features: ['Ghế da cao cấp', 'Điều hòa tự động', 'Cốp rộng', 'Màn hình giải trí'] },
+  { type: 'Limousine VIP', models: 'Ford Tourneo, Hyundai Staria,...', img: 'https://www.image2url.com/r2/default/images/1782303575426-1048a77b-89d4-4d22-8bd1-0701510c567d.png', features: ['Ghế massage', 'WiFi riêng', 'Màn hình HD', 'Rèm che riêng tư'] },
 ];
 
 export default function Fleet() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: 'Gọi ngay cho hotline',
+    text: 'Để đặt xe ngay, vui lòng gọi cho hotline dưới đây.',
+  });
 
-  const openBookingModal = e => {
+  const openBookingModal = (e, carType) => {
     e.preventDefault();
+    if (carType === 'Limousine VIP') {
+      setModalContent({
+        title: 'Hiện không còn xe trống',
+        text: 'Hiện tại loại xe Limousine đang không còn xe trống.',
+      });
+    } else {
+      setModalContent({
+        title: 'Gọi ngay cho hotline',
+        text: 'Để đặt xe ngay, vui lòng gọi cho hotline dưới đây.',
+      });
+    }
     setBookingModalOpen(true);
   };
 
@@ -56,7 +71,7 @@ export default function Fleet() {
                     <li key={j}><span>✓</span> {f}</li>
                   ))}
                 </ul>
-                <button type="button" className="btn btn-outline btn-sm fleet-card__cta" onClick={openBookingModal}>Đặt xe loại này</button>
+                <button type="button" className="btn btn-outline btn-sm fleet-card__cta" onClick={e => openBookingModal(e, car.type)}>Đặt xe loại này</button>
               </div>
             </div>
           ))}
@@ -66,8 +81,8 @@ export default function Fleet() {
       {bookingModalOpen && (
         <div className="fleet-modal" role="dialog" aria-modal="true" onClick={closeBookingModal}>
           <div className="fleet-modal__card" onClick={e => e.stopPropagation()}>
-            <h3>Gọi ngay cho hotline</h3>
-            <p>Để đặt xe ngay, vui lòng gọi cho hotline dưới đây.</p>
+            <h3>{modalContent.title}</h3>
+            <p>{modalContent.text}</p>
             <a href="tel:0329537532" className="fleet-modal__phone-link">📞 0329 537 532</a>
             <a href="tel:0978202606" className="fleet-modal__phone-link">📞 0978 202 606</a>
             <button type="button" className="btn btn-primary" onClick={closeBookingModal}>Đóng</button>

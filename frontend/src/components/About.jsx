@@ -13,8 +13,6 @@ const UPSPS = [
   { icon: '', title: 'Tài xế chuyên nghiệp', desc: 'Được đào tạo bài bản, thông thạo đường Tây Ninh, lịch sự và đúng giờ.' },
   { icon: '', title: 'Hoạt động 24/7', desc: 'Tổng đài và đội xe trực chiến 24/7, kể cả ngày lễ Tết.' },
   { icon: '', title: 'Giá không phát sinh', desc: 'Cam kết đúng giá báo. Không vòng vèo, không phụ thu ẩn.' },
-  { icon: '', title: 'Bảo hiểm toàn chuyến', desc: 'Mỗi hành khách được bảo hiểm tai nạn cá nhân trong suốt hành trình.' },
-  { icon: '', title: 'Hóa đơn VAT', desc: 'Xuất hóa đơn điện tử VAT cho doanh nghiệp ngay sau chuyến đi.' },
 ];
 
 export default function About() {

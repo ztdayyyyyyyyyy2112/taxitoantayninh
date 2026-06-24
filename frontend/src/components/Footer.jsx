@@ -41,7 +41,6 @@ export default function Footer() {
           <div className="footer__col">
             <h5>Hỗ trợ</h5>
             <ul>
-              <li><a href="#faq">Câu hỏi thường gặp</a></li>
               <li><a href="#contact">Khiếu nại / Phản hồi</a></li>
               <li><a href="#pricing">Bảng giá</a></li>
               <li><a href="#fleet">Đội xe</a></li>
@@ -51,10 +50,10 @@ export default function Footer() {
           <div className="footer__col">
             <h5>Liên hệ</h5>
             <ul>
-              <li>📞 <a href="tel:19001234">1900 1234</a></li>
-              <li>📞 <a href="tel:02763888888">0276 388 8888</a></li>
-              <li>✉️ <a href="mailto:cskh@taxitaynin.com.vn">cskh@taxitaynin.com.vn</a></li>
-              <li>📍 123 CMT8, P.2, TP. Tây Ninh</li>
+              <li>📞 <a href="tel:0329537532">0329 537 532</a></li>
+              <li>📞 <a href="tel:0978202606">0978 202 606</a></li>
+              <li>✉️ Đang cập nhật</li>
+              <li>📍 Đang cập nhật</li>
             </ul>
           </div>
         </div>

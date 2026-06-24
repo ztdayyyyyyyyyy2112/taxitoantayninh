@@ -18,10 +18,6 @@ const QUOTE_ROWS = [
     service: 'Đưa đón sân bay',
     detail: 'Đón trả tận cổng, hỗ trợ lịch trình và thời gian đặt xe.',
   },
-  {
-    service: 'Chuyến đường dài',
-    detail: 'Báo giá theo điểm đón, điểm đến và thời gian di chuyển.',
-  },
 ];
 
 export default function Pricing() {

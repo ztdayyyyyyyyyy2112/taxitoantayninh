@@ -6,7 +6,6 @@ import Fleet from './components/Fleet';
 import Pricing from './components/Pricing';
 import About from './components/About';
 import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
 import Recruitment from './components/Recruitment';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -30,7 +29,6 @@ export default function App() {
         <Pricing />
         <About />
         <Testimonials />
-        <FAQ />
         <Recruitment showToast={showToast} />
         <Contact showToast={showToast} />
       </main>

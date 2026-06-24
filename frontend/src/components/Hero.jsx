@@ -43,24 +43,6 @@ export default function Hero() {
             <span className="hero__hotline-note">· Có xe trong vài phút</span>
           </div>
 
-          {/* App download */}
-          <div className="hero__apps">
-            <a href="#" className="hero__app-btn" aria-label="Google Play" onClick={openAppModal}>
-              <span><img 
-    src="https://www.image2url.com/r2/default/images/1782297065186-fc90e51e-560a-44fa-baef-75305d3c8bd7.png" 
-    alt="Google Play Logo"
-    style={{ height: '50px', width: 'auto', marginRight: '5px' }} 
-  /></span> Google Play
-            </a>
-            <a href="#" className="hero__app-btn" aria-label="App Store" onClick={openAppModal}>
-              <span><img 
-    src="https://www.image2url.com/r2/default/images/1782296498702-6e565cc0-d598-472e-a741-7a9b991f3df4.png" 
-    alt="Apple Logo"
-    style={{ height: '50px', width: 'auto', marginRight: '5px' }} 
-  /></span> App Store
-            </a>
-          </div>
-
           {/* Trust badges */}
           <div className="hero__trust">
             <span> 100+ xe</span>
