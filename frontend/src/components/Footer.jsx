@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="footer__logo"> Taxi Tây Ninh</div>
             <p className="footer__tagline">An toàn · Đúng giờ · Minh bạch</p>
             <p className="footer__desc">
-              Hãng taxi uy tín hàng đầu tỉnh Tây Ninh, phục vụ 24/7 với đội xe hiện đại và tài xế chuyên nghiệp.
+              Hãng taxi uy tín hàng đầu tỉnh Tây Ninh, cung cấp taxi giá rẻ, taxi nhanh chóng, taxi an toàn 24/7 với đội xe hiện đại và tài xế chuyên nghiệp.
             </p>
             <div className="footer__socials">
               <a href="https://facebook.com/taxitaynin" target="_blank" rel="noreferrer" aria-label="Facebook">
@@ -61,6 +61,9 @@ export default function Footer() {
           <div className="footer__legal-info">
             <p><strong>Công ty TNHH Vận tải Taxi Tây Ninh</strong></p>
             <p>MST: [Đang cập nhật] · GPKD: [Đang cập nhật] · Giấy phép KD vận tải: [Đang cập nhật]</p>
+            <p style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
+              taxi giá rẻ taxi nhanh chóng taxi an toàn taxi 24/7 taxi Tây Ninh taxi sân bay taxi nội thành taxi công ty taxi cưới taxi sự kiện taxi chuyến dài taxi tiện lợi taxi uy tín taxi giá tốt taxi gọi xe nhanh taxi đúng giờ
+            </p>
           </div>
           <div className="footer__copyright">
             © {year} Taxi Tây Ninh. All rights reserved.

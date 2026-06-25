@@ -6,7 +6,6 @@ import Fleet from './components/Fleet';
 import Pricing from './components/Pricing';
 import About from './components/About';
 import Testimonials from './components/Testimonials';
-import Recruitment from './components/Recruitment';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import './App.css';
@@ -29,7 +28,6 @@ export default function App() {
         <Pricing />
         <About />
         <Testimonials />
-        <Recruitment showToast={showToast} />
         <Contact showToast={showToast} />
       </main>
       <Footer />

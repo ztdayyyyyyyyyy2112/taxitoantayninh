@@ -25,14 +25,14 @@ export default function Hero() {
 
       <div className="container hero__inner">
         <div className="hero__copy">
-          <div className="hero__badge"> Phục vụ 24/7 — Toàn tỉnh Tây Ninh</div>
+          <div className="hero__badge"> Phục vụ 24/7 — Taxi giá rẻ, nhanh chóng, an toàn toàn tỉnh Tây Ninh</div>
           <h1 className="hero__title">
-            Đặt xe nhanh<br />
-            <span className="hero__title-accent">an toàn · đúng giờ</span>
+            Taxi giá rẻ<br />
+            <span className="hero__title-accent">nhanh chóng · an toàn · đúng giờ</span>
           </h1>
           <p className="hero__sub">
-            Taxi Tây Ninh — hãng xe uy tín với đội xe đời mới, tài xế chuyên nghiệp,
-            cung cấp báo giá nhanh theo tuyến đường và nhu cầu của quý khách.
+            Taxi Tây Ninh mang đến dịch vụ taxi giá rẻ, taxi nhanh chóng, taxi an toàn 24/7 với đội xe đời mới,
+            tài xế chuyên nghiệp và báo giá minh bạch cho mọi tuyến đường trong tỉnh và liên tỉnh.
           </p>
 
           {/* Hotline CTA */}
