@@ -7,7 +7,11 @@ export default function Contact() {
       <div className="container">
         <div className="section-label">Liên hệ</div>
         <h2 className="section-title">Hỗ trợ & Khiếu nại</h2>
-        <p className="section-sub" style={{ marginBottom: 40 }}>Liên hệ trực tiếp qua hotline hoặc ghé thăm văn phòng để được hỗ trợ nhanh nhất.</p>
+        <p className="section-sub" style={{ marginBottom: 16 }}>Liên hệ trực tiếp qua hotline hoặc ghé thăm văn phòng để được hỗ trợ nhanh nhất.</p>
+        <p className="section-sub" style={{ marginBottom: 40, maxWidth: 760 }}>
+          Nếu bạn cần số điện thoại taxi Tây Ninh 24/7 để đặt xe nhanh, gọi taxi đưa đón sân bay Tây Ninh,
+          hoặc yêu cầu xe đi tòa thánh Tây Ninh, hãy liên hệ ngay với chúng tôi để được hỗ trợ tức thì.
+        </p>
         <div className="contact__inner">
           <div className="contact__info">
             <div className="contact__info-block">

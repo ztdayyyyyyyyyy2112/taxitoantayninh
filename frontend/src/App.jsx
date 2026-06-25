@@ -12,10 +12,33 @@ import './App.css';
 
 export default function App() {
   const [toast, setToast] = useState(null);
+  const [promoOpen, setPromoOpen] = useState(false);
+  const [phoneModalOpen, setPhoneModalOpen] = useState(false);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setPromoOpen(true);
+    }, 500);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const closePromo = () => {
+    setPromoOpen(false);
+  };
+
+  const openPhoneModal = event => {
+    event.preventDefault();
+    setPhoneModalOpen(true);
+  };
+
+  const closePhoneModal = () => {
+    setPhoneModalOpen(false);
   };
 
   return (
@@ -35,6 +58,55 @@ export default function App() {
         <div className={`toast toast--${toast.type}`}>
           <span>{toast.type === 'success' ? '✅' : '❌'}</span>
           {toast.msg}
+        </div>
+      )}
+      {promoOpen && (
+        <div className="promo-overlay" role="dialog" aria-modal="true" onClick={closePromo}>
+          <div className="promo-modal card" onClick={event => event.stopPropagation()}>
+            <button type="button" className="promo-close" onClick={closePromo} aria-label="Đóng popup">×</button>
+            <div className="promo-content">
+              <div className="promo-copy">
+                <div className="promo-badge">Ưu đãi mới</div>
+                <h3>Taxi Tây Ninh – mọi chuyến đi đều thuận tiện</h3>
+                <p>
+                  Taxi nội thành, sân bay, đưa đón bệnh viện, thuê xe theo giờ và dịch vụ doanh nghiệp — tất cả chỉ trong một chạm.
+                </p>
+                <div className="promo-actions">
+                  <a href="#services" className="btn btn-primary" onClick={closePromo}>Xem dịch vụ</a>
+                  <button type="button" className="btn btn-outline" onClick={openPhoneModal}>Gọi ngay</button>
+                </div>
+              </div>
+              <div className="promo-visual">
+                <img src="/promo-illustration.svg" alt="Taxi Tây Ninh promotion" />
+                <div className="promo-favicon">
+                  <img src="/favicon.png" alt="Favicon Taxi Tây Ninh" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {phoneModalOpen && (
+        <div className="promo-overlay" role="dialog" aria-modal="true" onClick={closePhoneModal}>
+          <div className="phone-modal card" onClick={event => event.stopPropagation()}>
+            <button type="button" className="promo-close" onClick={closePhoneModal} aria-label="Đóng popup gọi">×</button>
+            <h3>Gọi ngay cho Taxi Tây Ninh</h3>
+            <p>Chọn một số điện thoại bên dưới để mở ứng dụng gọi điện trên thiết bị của bạn.</p>
+            <a href="tel:0329537532" className="phone-option">
+              <span>📞</span>
+              <div>
+                <strong>0329 537 532</strong>
+                <small>Hotline 1</small>
+              </div>
+            </a>
+            <a href="tel:0978202606" className="phone-option">
+              <span>📞</span>
+              <div>
+                <strong>0978 202 606</strong>
+                <small>Hotline 2</small>
+              </div>
+            </a>
+          </div>
         </div>
       )}
     </div>

@@ -18,6 +18,10 @@ const QUOTE_ROWS = [
     service: 'Đưa đón sân bay',
     detail: 'Đón trả tận cổng, hỗ trợ lịch trình và thời gian đặt xe.',
   },
+  {
+    service: 'Đưa đón bệnh viện',
+    detail: 'Dành cho bệnh nhân và người nhà, đảm bảo thời gian và chuyến đi an toàn',
+  },
 ];
 
 export default function Pricing() {

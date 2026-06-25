@@ -31,8 +31,8 @@ export default function Hero() {
             <span className="hero__title-accent">nhanh chóng · an toàn · đúng giờ</span>
           </h1>
           <p className="hero__sub">
-            Taxi Tây Ninh mang đến dịch vụ taxi giá rẻ, taxi nhanh chóng, taxi an toàn 24/7 với đội xe đời mới,
-            tài xế chuyên nghiệp và báo giá minh bạch cho mọi tuyến đường trong tỉnh và liên tỉnh.
+            Taxi Tây Ninh mang đến dịch vụ taxi giá rẻ Tây Ninh, taxi đưa đón sân bay Tây Ninh, taxi đi tòa thánh Tây Ninh
+            và các chuyến nội tỉnh, liên tỉnh 24/7 với đội xe đời mới, tài xế chuyên nghiệp và báo giá minh bạch.
           </p>
 
           {/* Hotline CTA */}
