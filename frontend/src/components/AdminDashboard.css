@@ -5,7 +5,7 @@
 }
 
 .admin-dashboard__header {
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto 32px;
   display: flex;
   align-items: center;
@@ -23,8 +23,8 @@
 }
 
 .admin-card {
-  max-width: 980px;
-  margin: 0 auto;
+  max-width: 1100px;
+  margin: 0 auto 24px;
   background: #fff;
   border-radius: 22px;
   box-shadow: 0 20px 60px rgba(4, 28, 59, 0.08);
@@ -76,6 +76,92 @@
 .admin-form button {
   grid-column: span 2;
   max-width: 240px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-item {
+  border: 1px solid #e4ebf2;
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: #f8fafc;
+}
+
+.review-item__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.review-item__name {
+  font-weight: 700;
+  color: #102a43;
+}
+
+.review-item__role {
+  color: #556d8a;
+  font-size: 0.95rem;
+}
+
+.review-badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.review-badge--visible {
+  background: #e6f4ea;
+  color: #0f5132;
+}
+
+.review-badge--hidden {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.review-item__text {
+  color: #334e68;
+  margin: 8px 0 12px;
+  line-height: 1.6;
+}
+
+.review-item__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.review-item__actions button {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-item__actions .btn-danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.review-item__actions .btn-secondary {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.review-item__empty {
+  color: #556d8a;
+  padding: 16px 0;
 }
 
 @media (max-width: 760px) {

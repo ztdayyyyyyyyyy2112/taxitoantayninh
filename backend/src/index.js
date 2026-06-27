@@ -8,7 +8,7 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const ADMIN_USER = process.env.ADMIN_USER || 'taxitayninh12';
-const ADMIN_PASS = process.env.ADMIN_PASS || 'mk:001133';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'Taxi@001133';
 const adminSessions = new Set();
 
 const createAdminToken = () => crypto.randomBytes(24).toString('hex');
@@ -54,8 +54,6 @@ db.serialize(() => {
   const defaultConfig = [
     { key: 'phone', value: '0329537532' },
     { key: 'email', value: 'huynhlong2410@gmail.com' },
-    { key: 'tax_id', value: '0313889999' },
-    { key: 'business_id', value: '0102030405' },
   ];
 
   db.get('SELECT COUNT(*) AS count FROM configurations', (err, row) => {
@@ -100,16 +98,14 @@ app.get('/api/health', (req, res) => {
 // GET /api/configuration - Website configuration for frontend
 app.get('/api/configuration', (req, res) => {
   db.all(
-    "SELECT key, value FROM configurations WHERE key IN ('phone','email','tax_id','business_id')",
+    "SELECT key, value FROM configurations WHERE key IN ('phone','email')",
     (err, rows) => {
       if (err) {
         console.error('[CONFIG] GET error', err);
         return res.status(500).json({ success: false, message: 'Lỗi khi tải cấu hình trang web.' });
       }
       const data = rows.reduce((acc, row) => {
-        if (row.key === 'tax_id') acc.taxId = row.value;
-        else if (row.key === 'business_id') acc.businessId = row.value;
-        else acc[row.key] = row.value;
+        acc[row.key] = row.value;
         return acc;
       }, {});
       res.json({ success: true, data });
@@ -120,16 +116,14 @@ app.get('/api/configuration', (req, res) => {
 // GET /api/admin/configuration - Admin-only website configuration
 app.get('/api/admin/configuration', requireAdminAuth, (req, res) => {
   db.all(
-    "SELECT key, value FROM configurations WHERE key IN ('phone','email','tax_id','business_id')",
+    "SELECT key, value FROM configurations WHERE key IN ('phone','email')",
     (err, rows) => {
       if (err) {
         console.error('[ADMIN CONFIG] GET error', err);
         return res.status(500).json({ success: false, message: 'Lỗi khi tải cấu hình quản trị.' });
       }
       const data = rows.reduce((acc, row) => {
-        if (row.key === 'tax_id') acc.taxId = row.value;
-        else if (row.key === 'business_id') acc.businessId = row.value;
-        else acc[row.key] = row.value;
+        acc[row.key] = row.value;
         return acc;
       }, {});
       res.json({ success: true, data });
@@ -139,8 +133,8 @@ app.get('/api/admin/configuration', requireAdminAuth, (req, res) => {
 
 // PATCH /api/admin/configuration - Update website configuration
 app.patch('/api/admin/configuration', requireAdminAuth, (req, res) => {
-  const { phone, email, taxId, businessId } = req.body;
-  if (!phone || !email || !taxId || !businessId) {
+  const { phone, email } = req.body;
+  if (!phone || !email) {
     return res.status(400).json({ success: false, message: 'Vui lòng cung cấp đầy đủ thông tin cấu hình.' });
   }
 
@@ -148,8 +142,6 @@ app.patch('/api/admin/configuration', requireAdminAuth, (req, res) => {
   const updates = [
     { key: 'phone', value: phone.trim() },
     { key: 'email', value: email.trim() },
-    { key: 'tax_id', value: taxId.trim() },
-    { key: 'business_id', value: businessId.trim() },
   ];
 
   const query = `INSERT INTO configurations (key, value, updated_at) VALUES (?, ?, ?)
@@ -195,6 +187,68 @@ app.get('/api/reviews', (req, res) => {
       res.json({ success: true, data: rows });
     }
   );
+});
+
+// GET /api/admin/reviews - Danh sách toàn bộ đánh giá cho admin
+app.get('/api/admin/reviews', requireAdminAuth, (req, res) => {
+  db.all(
+    'SELECT id, name, role, text, stars, is_visible, created_at FROM reviews ORDER BY created_at DESC',
+    (err, rows) => {
+      if (err) {
+        console.error('[ADMIN REVIEWS] GET error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi tải danh sách đánh giá.' });
+      }
+      res.json({ success: true, data: rows });
+    }
+  );
+});
+
+// PATCH /api/admin/reviews/:id/visibility - Toggle visibility for a review
+app.patch('/api/admin/reviews/:id/visibility', requireAdminAuth, (req, res) => {
+  const reviewId = Number(req.params.id);
+  if (!Number.isInteger(reviewId) || reviewId <= 0) {
+    return res.status(400).json({ success: false, message: 'ID đánh giá không hợp lệ.' });
+  }
+
+  db.run(
+    'UPDATE reviews SET is_visible = CASE WHEN is_visible = 1 THEN 0 ELSE 1 END WHERE id = ?',
+    [reviewId],
+    function (err) {
+      if (err) {
+        console.error('[ADMIN REVIEWS] PATCH visibility error', err);
+        return res.status(500).json({ success: false, message: 'Không thể đổi trạng thái hiển thị.' });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy đánh giá.' });
+      }
+      db.get('SELECT id, is_visible FROM reviews WHERE id = ?', [reviewId], (selectErr, row) => {
+        if (selectErr) {
+          console.error('[ADMIN REVIEWS] SELECT after toggle error', selectErr);
+          return res.status(500).json({ success: false, message: 'Đã đổi trạng thái nhưng không đọc được dữ liệu mới.' });
+        }
+        res.json({ success: true, message: 'Đã đổi trạng thái hiển thị.', data: row });
+      });
+    }
+  );
+});
+
+// DELETE /api/admin/reviews/:id - Permanently delete a review
+app.delete('/api/admin/reviews/:id', requireAdminAuth, (req, res) => {
+  const reviewId = Number(req.params.id);
+  if (!Number.isInteger(reviewId) || reviewId <= 0) {
+    return res.status(400).json({ success: false, message: 'ID đánh giá không hợp lệ.' });
+  }
+
+  db.run('DELETE FROM reviews WHERE id = ?', [reviewId], function (err) {
+    if (err) {
+      console.error('[ADMIN REVIEWS] DELETE error', err);
+      return res.status(500).json({ success: false, message: 'Không thể xóa đánh giá.' });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đánh giá.' });
+    }
+    res.json({ success: true, message: 'Đã xóa đánh giá khỏi database.' });
+  });
 });
 
 // POST /api/reviews - Gửi đánh giá mới

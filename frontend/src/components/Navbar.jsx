@@ -55,7 +55,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <button type="button" className="btn btn-secondary btn-sm navbar__admin-btn" onClick={() => setLoginModalOpen(true)}>
+          <button type="button" className="btn btn-sm navbar__admin-btn" onClick={() => setLoginModalOpen(true)}>
             Quản lý web
           </button>
           <button type="button" className="btn btn-danger btn-sm navbar__cta" onClick={openCallModal}>

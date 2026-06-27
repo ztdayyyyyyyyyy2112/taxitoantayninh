@@ -46,7 +46,7 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
             <input
               value={username}
               onChange={e => setUsername(e.target.value)}
-              placeholder="taxitayninh12"
+              autoComplete="username"
             />
           </label>
           <label>
@@ -55,7 +55,7 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="mk:001133"
+              autoComplete="current-password"
             />
           </label>
           {error && <div className="login-modal__error">{error}</div>}

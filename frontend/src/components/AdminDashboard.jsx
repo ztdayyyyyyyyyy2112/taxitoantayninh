@@ -10,9 +10,13 @@ const getToken = () => localStorage.getItem('adminToken');
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { refreshConfig } = useWebsiteConfig();
-  const [config, setConfig] = useState({ phone: '', email: '', taxId: '', businessId: '' });
+  const [config, setConfig] = useState({ phone: '', email: '' });
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState(null);
+  const [reviewActionLoadingId, setReviewActionLoadingId] = useState(null);
 
   const fetchConfig = async () => {
     setLoading(true);
@@ -38,8 +42,33 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchReviews = async () => {
+    setReviewsLoading(true);
+    try {
+      const res = await fetch(`${API}/api/admin/reviews`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.data || []);
+      } else {
+        if (res.status === 401) {
+          localStorage.removeItem('adminToken');
+          return navigate('/', { replace: true });
+        }
+        setReviewMessage({ type: 'error', text: data.message || 'Không thể tải danh sách đánh giá.' });
+      }
+    } catch (error) {
+      console.error(error);
+      setReviewMessage({ type: 'error', text: 'Lỗi kết nối tới máy chủ.' });
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchConfig();
+    fetchReviews();
   }, []);
 
   const handleChange = (key, value) => setConfig(prev => ({ ...prev, [key]: value }));
@@ -75,6 +104,60 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteReview = async reviewId => {
+    setReviewActionLoadingId(reviewId);
+    try {
+      const res = await fetch(`${API}/api/admin/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviews(prev => prev.filter(review => review.id !== reviewId));
+        setReviewMessage({ type: 'success', text: data.message || 'Đã xóa đánh giá.' });
+      } else {
+        if (res.status === 401) {
+          localStorage.removeItem('adminToken');
+          return navigate('/', { replace: true });
+        }
+        setReviewMessage({ type: 'error', text: data.message || 'Không thể xóa đánh giá.' });
+      }
+    } catch (error) {
+      console.error(error);
+      setReviewMessage({ type: 'error', text: 'Lỗi kết nối tới máy chủ.' });
+    } finally {
+      setReviewActionLoadingId(null);
+    }
+  };
+
+  const handleToggleReviewVisibility = async reviewId => {
+    setReviewActionLoadingId(reviewId);
+    try {
+      const res = await fetch(`${API}/api/admin/reviews/${reviewId}/visibility`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviews(prev => prev.map(review => (
+          review.id === reviewId ? { ...review, is_visible: data.data.is_visible } : review
+        )));
+        setReviewMessage({ type: 'success', text: data.message || 'Đã cập nhật trạng thái.' });
+      } else {
+        if (res.status === 401) {
+          localStorage.removeItem('adminToken');
+          return navigate('/', { replace: true });
+        }
+        setReviewMessage({ type: 'error', text: data.message || 'Không thể đổi trạng thái.' });
+      }
+    } catch (error) {
+      console.error(error);
+      setReviewMessage({ type: 'error', text: 'Lỗi kết nối tới máy chủ.' });
+    } finally {
+      setReviewActionLoadingId(null);
+    }
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="admin-dashboard__header">
@@ -87,7 +170,7 @@ export default function AdminDashboard() {
       <section className="admin-card">
         <div className="admin-card__title">
           <h2>Cấu hình Website</h2>
-          <p>Chỉnh thông tin liên hệ và mã số doanh nghiệp để cập nhật lên toàn site.</p>
+          <p>Chỉnh thông tin liên hệ để cập nhật lên toàn site.</p>
         </div>
         {message && (
           <div className={`admin-alert admin-alert--${message.type}`}>
@@ -112,26 +195,62 @@ export default function AdminDashboard() {
               placeholder="email@domain.com"
             />
           </label>
-          <label>
-            Mã số thuế
-            <input
-              value={config.taxId}
-              onChange={e => handleChange('taxId', e.target.value)}
-              placeholder="0313889999"
-            />
-          </label>
-          <label>
-            Mã số kinh doanh
-            <input
-              value={config.businessId}
-              onChange={e => handleChange('businessId', e.target.value)}
-              placeholder="0102030405"
-            />
-          </label>
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'Đang cập nhật...' : 'Cập nhật'}
           </button>
         </form>
+      </section>
+
+      <section className="admin-card">
+        <div className="admin-card__title">
+          <h2>Quản lý đánh giá</h2>
+          <p>Xem toàn bộ đánh giá trong database, ẩn/hiện hoặc xóa trực tiếp khỏi trang chủ.</p>
+        </div>
+        {reviewMessage && (
+          <div className={`admin-alert admin-alert--${reviewMessage.type}`}>
+            {reviewMessage.text}
+          </div>
+        )}
+        {reviewsLoading ? (
+          <p>Đang tải đánh giá...</p>
+        ) : reviews.length === 0 ? (
+          <p className="review-item__empty">Chưa có đánh giá nào trong database.</p>
+        ) : (
+          <div className="review-list">
+            {reviews.map(review => (
+              <article key={review.id} className="review-item">
+                <div className="review-item__meta">
+                  <div>
+                    <div className="review-item__name">{review.name}</div>
+                    <div className="review-item__role">{review.role || 'Khách hàng'}</div>
+                  </div>
+                  <div className={`review-badge ${review.is_visible ? 'review-badge--visible' : 'review-badge--hidden'}`}>
+                    {review.is_visible ? 'Đang hiện' : 'Đang ẩn'}
+                  </div>
+                </div>
+                <div className="review-item__text">{review.text}</div>
+                <div className="review-item__actions">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => handleToggleReviewVisibility(review.id)}
+                    disabled={reviewActionLoadingId === review.id}
+                  >
+                    {reviewActionLoadingId === review.id ? 'Đang xử lý...' : review.is_visible ? 'Ẩn' : 'Hiện'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteReview(review.id)}
+                    disabled={reviewActionLoadingId === review.id}
+                  >
+                    {reviewActionLoadingId === review.id ? 'Đang xử lý...' : 'Xóa'}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

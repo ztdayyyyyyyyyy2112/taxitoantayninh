@@ -57,6 +57,22 @@
 .navbar__link:hover { color: var(--gold); background: rgba(255,255,255,.06); }
 
 .navbar__cta { margin-left: 8px; }
+.navbar__admin-btn {
+  margin-left: 8px;
+  padding: 10px 20px;
+  font-size: .9rem;
+  color: var(--navy);
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.navbar__admin-btn:hover {
+  background: var(--gold-dk);
+  border-color: var(--gold-dk);
+  color: var(--navy);
+}
 
 .navbar__burger {
   display: none;

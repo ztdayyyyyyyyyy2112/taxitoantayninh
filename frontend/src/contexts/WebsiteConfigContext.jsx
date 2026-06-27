@@ -4,8 +4,6 @@ const WebsiteConfigContext = createContext({
   phone: '0329537532',
   formattedPhone: '0329 537 532',
   email: 'huynhlong2410@gmail.com',
-  taxId: '0313889999',
-  businessId: '0102030405',
   refreshConfig: () => {},
 });
 
@@ -23,8 +21,6 @@ export function WebsiteConfigProvider({ children }) {
     phone: '0329537532',
     formattedPhone: '0329 537 532',
     email: 'huynhlong2410@gmail.com',
-    taxId: '0313889999',
-    businessId: '0102030405',
   });
 
   const refreshConfig = async () => {
@@ -36,8 +32,6 @@ export function WebsiteConfigProvider({ children }) {
           phone: data.data.phone || '0329537532',
           formattedPhone: formatPhone(data.data.phone || '0329537532'),
           email: data.data.email || 'huynhlong2410@gmail.com',
-          taxId: data.data.taxId || '0313889999',
-          businessId: data.data.businessId || '0102030405',
         });
       }
     } catch (error) {
