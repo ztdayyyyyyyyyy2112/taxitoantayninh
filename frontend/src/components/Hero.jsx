@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
 import './Hero.css';
 
 export default function Hero() {
+  const { phone, formattedPhone } = useWebsiteConfig();
   const [appModalOpen, setAppModalOpen] = useState(false);
   const [callModalOpen, setCallModalOpen] = useState(false);
 
@@ -69,7 +71,7 @@ export default function Hero() {
           <div className="hero__app-modal-card" onClick={e => e.stopPropagation()}>
             <h3>Tính năng đặt trước đang cập nhật</h3>
             <p>Tính năng đặt trước đang cập nhật, hãy gọi hotline để đặt xe ngay.</p>
-            <a href="tel:0329537532" className="hero__phone-link">📞 0329 537 532</a>
+            <a href={`tel:${phone}`} className="hero__phone-link">📞 {formattedPhone}</a>
             <button type="button" className="btn btn-primary" onClick={closeCallModal}>Đóng</button>
           </div>
         </div>

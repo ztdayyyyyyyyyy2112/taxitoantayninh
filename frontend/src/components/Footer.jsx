@@ -1,7 +1,9 @@
 import React from 'react';
+import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
 import './Footer.css';
 
 export default function Footer() {
+  const { phone, formattedPhone, email } = useWebsiteConfig();
   const year = new Date().getFullYear();
   return (
     <footer className="footer">
@@ -49,8 +51,8 @@ export default function Footer() {
           <div className="footer__col">
             <h5>Liên hệ</h5>
             <ul>
-              <li>📞 <a href="tel:0329537532">0329 537 532</a></li>
-              <li>✉️ <a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></li>
+              <li>📞 <a href={`tel:${phone}`}>{formattedPhone}</a></li>
+              <li>✉️ <a href={`mailto:${email}`}>{email}</a></li>
               <li>📍 Xã Trường Tây, phường Long Hòa, tỉnh Tây Ninh</li>
             </ul>
           </div>

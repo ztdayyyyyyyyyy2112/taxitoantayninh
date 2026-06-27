@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
 import './Partner.css';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const BENEFITS = [
   { icon: '🏷️', text: 'Chiết khấu 10-20% tùy khối lượng chuyến' },
@@ -13,6 +14,7 @@ const BENEFITS = [
 ];
 
 export default function Partner({ showToast }) {
+  const { phone, formattedPhone, email } = useWebsiteConfig();
   const [form, setForm] = useState({ company: '', contactName: '', phone: '', email: '', employees: '', note: '' });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -50,8 +52,8 @@ export default function Partner({ showToast }) {
             </div>
             <div className="partner__contact-info">
               <p><strong>Phòng Kinh Doanh:</strong></p>
-              <p>📞 <a href="tel:0329537532">0329 537 532</a></p>
-              <p>✉️ <a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></p>
+              <p>📞 <a href={`tel:${phone}`}>{formattedPhone}</a></p>
+              <p>✉️ <a href={`mailto:${email}`}>{email}</a></p>
             </div>
           </div>
           <div className="partner__form card">

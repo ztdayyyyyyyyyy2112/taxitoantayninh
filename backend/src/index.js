@@ -1,11 +1,26 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const ADMIN_USER = process.env.ADMIN_USER || 'taxitayninh12';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'mk:001133';
+const adminSessions = new Set();
+
+const createAdminToken = () => crypto.randomBytes(24).toString('hex');
+
+const requireAdminAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+  if (!token || !adminSessions.has(token)) {
+    return res.status(401).json({ success: false, message: 'Unauthorized access. Please login as admin.' });
+  }
+  next();
+};
 
 app.use(cors());
 app.use(express.json());
@@ -28,6 +43,32 @@ db.serialize(() => {
     is_visible INTEGER NOT NULL DEFAULT 1,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS configurations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL UNIQUE,
+    value TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  const defaultConfig = [
+    { key: 'phone', value: '0329537532' },
+    { key: 'email', value: 'huynhlong2410@gmail.com' },
+    { key: 'tax_id', value: '0313889999' },
+    { key: 'business_id', value: '0102030405' },
+  ];
+
+  db.get('SELECT COUNT(*) AS count FROM configurations', (err, row) => {
+    if (!err && row.count === 0) {
+      const stmt = db.prepare(
+        'INSERT INTO configurations (key, value, updated_at) VALUES (?, ?, ?)'
+      );
+      defaultConfig.forEach(item => {
+        stmt.run(item.key, item.value, new Date().toISOString());
+      });
+      stmt.finalize();
+    }
+  });
 
   db.get('SELECT COUNT(*) AS count FROM reviews', (err, row) => {
     if (!err && row.count === 0) {
@@ -54,6 +95,92 @@ const recruitments = [];
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Taxi Tây Ninh API đang hoạt động' });
+});
+
+// GET /api/configuration - Website configuration for frontend
+app.get('/api/configuration', (req, res) => {
+  db.all(
+    "SELECT key, value FROM configurations WHERE key IN ('phone','email','tax_id','business_id')",
+    (err, rows) => {
+      if (err) {
+        console.error('[CONFIG] GET error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi tải cấu hình trang web.' });
+      }
+      const data = rows.reduce((acc, row) => {
+        if (row.key === 'tax_id') acc.taxId = row.value;
+        else if (row.key === 'business_id') acc.businessId = row.value;
+        else acc[row.key] = row.value;
+        return acc;
+      }, {});
+      res.json({ success: true, data });
+    }
+  );
+});
+
+// GET /api/admin/configuration - Admin-only website configuration
+app.get('/api/admin/configuration', requireAdminAuth, (req, res) => {
+  db.all(
+    "SELECT key, value FROM configurations WHERE key IN ('phone','email','tax_id','business_id')",
+    (err, rows) => {
+      if (err) {
+        console.error('[ADMIN CONFIG] GET error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi tải cấu hình quản trị.' });
+      }
+      const data = rows.reduce((acc, row) => {
+        if (row.key === 'tax_id') acc.taxId = row.value;
+        else if (row.key === 'business_id') acc.businessId = row.value;
+        else acc[row.key] = row.value;
+        return acc;
+      }, {});
+      res.json({ success: true, data });
+    }
+  );
+});
+
+// PATCH /api/admin/configuration - Update website configuration
+app.patch('/api/admin/configuration', requireAdminAuth, (req, res) => {
+  const { phone, email, taxId, businessId } = req.body;
+  if (!phone || !email || !taxId || !businessId) {
+    return res.status(400).json({ success: false, message: 'Vui lòng cung cấp đầy đủ thông tin cấu hình.' });
+  }
+
+  const now = new Date().toISOString();
+  const updates = [
+    { key: 'phone', value: phone.trim() },
+    { key: 'email', value: email.trim() },
+    { key: 'tax_id', value: taxId.trim() },
+    { key: 'business_id', value: businessId.trim() },
+  ];
+
+  const query = `INSERT INTO configurations (key, value, updated_at) VALUES (?, ?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`;
+
+  const stmt = db.prepare(query);
+  updates.forEach(item => stmt.run(item.key, item.value, now));
+  stmt.finalize(err => {
+    if (err) {
+      console.error('[ADMIN CONFIG] PATCH error', err);
+      return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật cấu hình.' });
+    }
+    res.json({ success: true, message: 'Cập nhật cấu hình thành công.' });
+  });
+});
+
+// POST /api/admin/login - Admin login for dashboard access
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Vui lòng điền tài khoản và mật khẩu.' });
+  }
+
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    const token = createAdminToken();
+    adminSessions.add(token);
+    setTimeout(() => adminSessions.delete(token), 1000 * 60 * 60);
+    return res.json({ success: true, message: 'Đăng nhập thành công.', token });
+  }
+
+  res.status(401).json({ success: false, message: 'Tài khoản hoặc mật khẩu không đúng.' });
 });
 
 // GET /api/reviews - Danh sách đánh giá công khai

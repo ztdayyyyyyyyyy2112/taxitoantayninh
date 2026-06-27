@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
+import LoginModal from './LoginModal';
 import './Navbar.css';
 
 const links = [
@@ -14,6 +17,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const { phone, formattedPhone } = useWebsiteConfig();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -27,6 +33,10 @@ export default function Navbar() {
   };
 
   const closeCallModal = () => setCallModalOpen(false);
+  const handleLoginSuccess = () => {
+    setLoginModalOpen(false);
+    navigate('/admin-dashboard');
+  };
 
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
@@ -45,12 +55,15 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
+          <button type="button" className="btn btn-secondary btn-sm navbar__admin-btn" onClick={() => setLoginModalOpen(true)}>
+            Quản lý web
+          </button>
           <button type="button" className="btn btn-danger btn-sm navbar__cta" onClick={openCallModal}>
             <img 
-    src="https://www.image2url.com/r2/default/images/1782290563210-985d23dc-409a-4ede-a6ee-6384548da4c7.png" 
-    alt="Taxi Hotline Logo"
-    style={{ height: '30px', width: 'auto', marginRight: '10px' }} 
-  /> Gọi Đặt Xe Ngay
+              src="https://www.image2url.com/r2/default/images/1782290563210-985d23dc-409a-4ede-a6ee-6384548da4c7.png" 
+              alt="Taxi Hotline Logo"
+              style={{ height: '30px', width: 'auto', marginRight: '10px' }} 
+            /> Gọi Đặt Xe Ngay
           </button>
         </nav>
 
@@ -64,10 +77,13 @@ export default function Navbar() {
           <div className="navbar__modal-card" onClick={e => e.stopPropagation()}>
             <h3>Liên hệ đặt xe</h3>
             <p>Chọn một số bên dưới để gọi trực tiếp.</p>
-            <a href="tel:0329537532" className="navbar__phone-link">0329 537 532</a>
+            <a href={`tel:${phone}`} className="navbar__phone-link">{formattedPhone}</a>
             <button type="button" className="btn btn-primary" onClick={closeCallModal}>Đóng</button>
           </div>
         </div>
+      )}
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} onLoginSuccess={handleLoginSuccess} />
       )}
     </header>
   );

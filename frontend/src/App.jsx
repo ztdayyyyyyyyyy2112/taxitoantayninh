@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -8,12 +9,23 @@ import About from './components/About';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import AdminDashboard from './components/AdminDashboard';
+import { WebsiteConfigProvider, useWebsiteConfig } from './contexts/WebsiteConfigContext';
 import './App.css';
 
-export default function App() {
+function AdminProtectedRoute({ children }) {
+  const token = localStorage.getItem('adminToken');
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+function AppContent() {
   const [toast, setToast] = useState(null);
   const [promoOpen, setPromoOpen] = useState(false);
   const [phoneModalOpen, setPhoneModalOpen] = useState(false);
+  const { phone, formattedPhone } = useWebsiteConfig();
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -45,13 +57,31 @@ export default function App() {
     <div className="app">
       <Navbar />
       <main>
-        <Hero showToast={showToast} />
-        <Services />
-        <Fleet />
-        <Pricing />
-        <About />
-        <Testimonials showToast={showToast} />
-        <Contact showToast={showToast} />
+        <Routes>
+          <Route
+            path="/"
+            element={(
+              <>
+                <Hero showToast={showToast} />
+                <Services />
+                <Fleet />
+                <Pricing />
+                <About />
+                <Testimonials showToast={showToast} />
+                <Contact showToast={showToast} />
+              </>
+            )}
+          />
+          <Route
+            path="/admin-dashboard"
+            element={(
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            )}
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
       <Footer />
       {toast && (
@@ -92,15 +122,25 @@ export default function App() {
             <button type="button" className="promo-close" onClick={closePhoneModal} aria-label="Đóng popup gọi">×</button>
             <h3>Gọi ngay cho Taxi Tây Ninh</h3>
             <p>Chọn một số điện thoại bên dưới để mở ứng dụng gọi điện trên thiết bị của bạn.</p>
-            <a href="tel:0329537532" className="phone-option">
+            <a href={`tel:${phone}`} className="phone-option">
               <span>📞</span>
               <div>
-                <strong>0329 537 532</strong>
+                <strong>{formattedPhone}</strong>
               </div>
             </a>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <WebsiteConfigProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </WebsiteConfigProvider>
   );
 }

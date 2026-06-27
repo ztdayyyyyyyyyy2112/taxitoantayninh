@@ -1,7 +1,9 @@
 import React from 'react';
+import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
 import './Contact.css';
 
 export default function Contact() {
+  const { phone, formattedPhone, email } = useWebsiteConfig();
   return (
     <section id="contact" className="section section--alt">
       <div className="container">
@@ -16,17 +18,17 @@ export default function Contact() {
           <div className="contact__info">
             <div className="contact__info-block">
               <h4>📞 Hotline đặt xe</h4>
-              <a href="tel:0329537532" className="contact__hotline">0329 537 532</a>
+              <a href={`tel:${phone}`} className="contact__hotline">{formattedPhone}</a>
               <p>Hoạt động 24/7 · hỗ trợ đặt xe tức thì</p>
             </div>
             <div className="contact__info-block">
               <h4>📞 Khiếu nại & phản hồi</h4>
-              <a href="tel:0329537532" className="contact__hotline contact__hotline--small">0329 537 532</a>
+              <a href={`tel:${phone}`} className="contact__hotline contact__hotline--small">{formattedPhone}</a>
               <p>Thứ 2 – Thứ 7 · 7:00 – 21:00</p>
             </div>
             <div className="contact__info-block">
               <h4>✉️ Email</h4>
-              <p><a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></p>
+              <p><a href={`mailto:${email}`}>{email}</a></p>
             </div>
             <div className="contact__info-block">
               <h4>📍 Văn phòng chính</h4>
