@@ -61,6 +61,28 @@
   background: #f8fafc;
 }
 
+.login-modal__password-wrap {
+  position: relative;
+}
+
+.login-modal__password-wrap input {
+  width: 100%;
+  padding-right: 72px;
+}
+
+.login-modal__password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
 .login-modal__error {
   color: #842029;
   background: #f8d7da;
