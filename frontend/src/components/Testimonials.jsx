@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getApiUrl } from '../config/api';
 import './Testimonials.css';
 
 export default function Testimonials({ showToast }) {
@@ -9,7 +10,7 @@ export default function Testimonials({ showToast }) {
 
   const loadReviews = async () => {
     try {
-      const response = await fetch('/api/reviews');
+      const response = await fetch(getApiUrl('/api/reviews'));
       const result = await response.json();
       if (result.success) {
         setReviews(result.data);
@@ -46,7 +47,7 @@ export default function Testimonials({ showToast }) {
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/reviews', {
+      const response = await fetch(getApiUrl('/api/reviews'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: form.name, role: form.role, text: form.text, stars: form.stars }),

@@ -3,13 +3,25 @@ const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const { createDatabase, initializeDatabase } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const ADMIN_USER = process.env.ADMIN_USER || 'taxitayninh12';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'Taxi@001133';
 const adminSessions = new Set();
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'https://taxitoantayninh.vercel.app',
+  'https://www.taxitoantayninh.vercel.app',
+  process.env.CORS_ORIGIN,
+].filter(Boolean);
+const isAllowedOrigin = origin => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  return /^https:\/\/.*\.vercel\.app$/i.test(origin);
+};
 
 const createAdminToken = () => crypto.randomBytes(24).toString('hex');
 
@@ -22,65 +34,22 @@ const requireAdminAuth = (req, res, next) => {
   next();
 };
 
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,
+}));
+app.options('*', cors());
 app.use(express.json());
 
-const dataDir = path.resolve(__dirname, '../data');
-const dbPath = path.join(dataDir, 'reviews.db');
-fs.mkdirSync(dataDir, { recursive: true });
-const db = new sqlite3.Database(dbPath, err => {
-  if (err) return console.error('❌ Không thể mở database:', err);
-  console.log('✅ Database reviews đã sẵn sàng ở', dbPath);
-});
-
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS reviews (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    role TEXT NOT NULL,
-    text TEXT NOT NULL,
-    stars INTEGER NOT NULL DEFAULT 5,
-    is_visible INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`);
-
-  db.run(`CREATE TABLE IF NOT EXISTS configurations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    key TEXT NOT NULL UNIQUE,
-    value TEXT NOT NULL,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`);
-
-  const defaultConfig = [
-    { key: 'phone', value: '0329537532' },
-    { key: 'email', value: 'huynhlong2410@gmail.com' },
-  ];
-
-  db.get('SELECT COUNT(*) AS count FROM configurations', (err, row) => {
-    if (!err && row.count === 0) {
-      const stmt = db.prepare(
-        'INSERT INTO configurations (key, value, updated_at) VALUES (?, ?, ?)'
-      );
-      defaultConfig.forEach(item => {
-        stmt.run(item.key, item.value, new Date().toISOString());
-      });
-      stmt.finalize();
-    }
-  });
-
-  db.get('SELECT COUNT(*) AS count FROM reviews', (err, row) => {
-    if (!err && row.count === 0) {
-      const sampleReviews = [
-        { name: 'Nguyễn Thị Mai', role: 'Khách hàng cá nhân', text: 'Đặt xe lúc 3 giờ sáng ra sân bay, tài xế đến đúng 5 phút. Xe sạch, lái xe rất lịch sự. Sẽ dùng lâu dài!', stars: 5 },
-        { name: 'Trần Văn Hùng', role: 'Giám đốc Cty TNHH Phú Cường', text: 'Hợp đồng đưa đón nhân viên 2 năm qua rất hài lòng. Hóa đơn VAT nhanh, quản lý công nợ gọn gàng. Recommend!', stars: 5 },
-        { name: 'Lê Thị Ánh', role: 'Khách du lịch từ TP.HCM', text: 'Về thăm núi Bà Đen, thuê xe 7 chỗ cả ngày. Tài xế biết rõ từng điểm tham quan, rất tận tình. Giá hợp lý.', stars: 5 },
-      ];
-      const stmt = db.prepare('INSERT INTO reviews (name, role, text, stars, is_visible) VALUES (?, ?, ?, ?, 1)');
-      sampleReviews.forEach(r => stmt.run(r.name, r.role, r.text, r.stars));
-      stmt.finalize();
-    }
-  });
-});
+const db = createDatabase();
+initializeDatabase(db);
 
 // ─── In-memory store for demo ─────────────────────────────────────
 const bookings = [];
@@ -147,15 +116,22 @@ app.patch('/api/admin/configuration', requireAdminAuth, (req, res) => {
   const query = `INSERT INTO configurations (key, value, updated_at) VALUES (?, ?, ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`;
 
-  const stmt = db.prepare(query);
-  updates.forEach(item => stmt.run(item.key, item.value, now));
-  stmt.finalize(err => {
-    if (err) {
-      console.error('[ADMIN CONFIG] PATCH error', err);
-      return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật cấu hình.' });
+  const runNextUpdate = index => {
+    if (index >= updates.length) {
+      return res.json({ success: true, message: 'Cập nhật cấu hình thành công.' });
     }
-    res.json({ success: true, message: 'Cập nhật cấu hình thành công.' });
-  });
+
+    const item = updates[index];
+    db.run(query, [item.key, item.value, now], err => {
+      if (err) {
+        console.error('[ADMIN CONFIG] PATCH error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật cấu hình.' });
+      }
+      runNextUpdate(index + 1);
+    });
+  };
+
+  runNextUpdate(0);
 });
 
 // POST /api/admin/login - Admin login for dashboard access

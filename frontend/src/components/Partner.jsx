@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
+import { getApiUrl } from '../config/api';
 import './Partner.css';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const BENEFITS = [
   { icon: '🏷️', text: 'Chiết khấu 10-20% tùy khối lượng chuyến' },
@@ -24,7 +23,7 @@ export default function Partner({ showToast }) {
     if (!form.company || !form.contactName || !form.phone) return showToast('Vui lòng điền đầy đủ thông tin', 'error');
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/partner`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const res = await fetch(getApiUrl('/api/partner'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const data = await res.json();
       showToast(data.message, data.success ? 'success' : 'error');
       if (data.success) setForm({ company: '', contactName: '', phone: '', email: '', employees: '', note: '' });

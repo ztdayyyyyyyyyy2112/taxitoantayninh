@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import { getApiUrl } from '../config/api';
 import './LoginModal.css';
-
-const API = import.meta.env.VITE_API_URL || '';
 
 export default function LoginModal({ onClose, onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -14,7 +13,7 @@ export default function LoginModal({ onClose, onLoginSuccess }) {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/admin/login`, {
+      const res = await fetch(getApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

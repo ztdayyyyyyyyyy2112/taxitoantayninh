@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getApiUrl } from '../config/api';
 
 const WebsiteConfigContext = createContext({
   phone: '0329537532',
@@ -25,7 +26,7 @@ export function WebsiteConfigProvider({ children }) {
 
   const refreshConfig = async () => {
     try {
-      const res = await fetch('/api/configuration');
+      const res = await fetch(getApiUrl('/api/configuration'));
       const data = await res.json();
       if (data.success && data.data) {
         setConfig({

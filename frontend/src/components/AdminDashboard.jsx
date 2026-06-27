@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWebsiteConfig } from '../contexts/WebsiteConfigContext';
+import { getApiUrl } from '../config/api';
 import './AdminDashboard.css';
-
-const API = import.meta.env.VITE_API_URL || '';
 
 const getToken = () => localStorage.getItem('adminToken');
 
@@ -21,7 +20,7 @@ export default function AdminDashboard() {
   const fetchConfig = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/admin/configuration`, {
+      const res = await fetch(getApiUrl('/api/admin/configuration'), {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -45,7 +44,7 @@ export default function AdminDashboard() {
   const fetchReviews = async () => {
     setReviewsLoading(true);
     try {
-      const res = await fetch(`${API}/api/admin/reviews`, {
+      const res = await fetch(getApiUrl('/api/admin/reviews'), {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -77,7 +76,7 @@ export default function AdminDashboard() {
     event.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/admin/configuration`, {
+      const res = await fetch(getApiUrl('/api/admin/configuration'), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +106,7 @@ export default function AdminDashboard() {
   const handleDeleteReview = async reviewId => {
     setReviewActionLoadingId(reviewId);
     try {
-      const res = await fetch(`${API}/api/admin/reviews/${reviewId}`, {
+      const res = await fetch(getApiUrl(`/api/admin/reviews/${reviewId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -133,7 +132,7 @@ export default function AdminDashboard() {
   const handleToggleReviewVisibility = async reviewId => {
     setReviewActionLoadingId(reviewId);
     try {
-      const res = await fetch(`${API}/api/admin/reviews/${reviewId}/visibility`, {
+      const res = await fetch(getApiUrl(`/api/admin/reviews/${reviewId}/visibility`), {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${getToken()}` },
       });
