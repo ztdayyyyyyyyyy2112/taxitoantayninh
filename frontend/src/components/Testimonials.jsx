@@ -1,18 +1,69 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Testimonials.css';
 
-const REVIEWS = [
-  { name: 'Nguyễn Thị Mai', role: 'Khách hàng cá nhân', text: 'Đặt xe lúc 3 giờ sáng ra sân bay, tài xế đến đúng 5 phút. Xe sạch, lái xe rất lịch sự. Sẽ dùng lâu dài!', stars: 5 },
-  { name: 'Trần Văn Hùng', role: 'Giám đốc Cty TNHH Phú Cường', text: 'Hợp đồng đưa đón nhân viên 2 năm qua rất hài lòng. Hóa đơn VAT nhanh, quản lý công nợ gọn gàng. Recommend!', stars: 5 },
-  { name: 'Lê Thị Ánh', role: 'Khách du lịch từ TP.HCM', text: 'Về thăm núi Bà Đen, thuê xe 7 chỗ cả ngày. Tài xế biết rõ từng điểm tham quan, rất tận tình. Giá hợp lý.', stars: 5 },
-  { name: 'Phạm Quốc Dũng', role: 'Nhân viên công tác', text: 'Chạy tuyến Tây Ninh – Bình Dương 2 lần/tuần. Đặt hôm trước xe đến đúng giờ, không lo trễ họp.', stars: 5 },
-  { name: 'Võ Thị Thu', role: 'Chủ tiệm áo cưới', text: 'Thuê xe cưới hãng này cho chị gái. Xe sạch đẹp, tài xế mặc đồ tươm tất. Khách mời khen nhiều lắm!', stars: 5 },
-  { name: 'Nguyễn Minh Tú', role: 'Kỹ sư xây dựng', text: 'Công trình xa trung tâm, hay gọi taxi đi lại. Hãng này ổn nhất vùng — đúng giờ, giá cước không ép.', stars: 5 },
-];
+export default function Testimonials({ showToast }) {
+  const [reviews, setReviews] = useState([]);
+  const [form, setForm] = useState({ name: '', role: '', text: '', stars: 5 });
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-export default function Testimonials() {
-  const [start, setStart] = useState(0);
-  const visible = REVIEWS.slice(start, start + 3);
+  const loadReviews = async () => {
+    try {
+      const response = await fetch('/api/reviews');
+      const result = await response.json();
+      if (result.success) {
+        setReviews(result.data);
+      } else {
+        throw new Error(result.message || 'Không thể tải đánh giá');
+      }
+    } catch (error) {
+      console.error(error);
+      if (showToast) showToast('Không tải được đánh giá. Vui lòng thử lại sau.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadReviews();
+  }, []);
+
+  const handleChange = event => {
+    const { name, value } = event.target;
+    setForm(curr => ({ ...curr, [name]: value }));
+  };
+
+  const handleStars = value => {
+    setForm(curr => ({ ...curr, stars: value }));
+  };
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+    if (!form.name.trim() || !form.text.trim()) {
+      if (showToast) showToast('Vui lòng điền họ tên và nội dung đánh giá.', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, role: form.role, text: form.text, stars: form.stars }),
+      });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message || 'Lỗi gửi đánh giá');
+
+      setForm({ name: '', role: '', text: '', stars: 5 });
+      if (showToast) showToast(result.message, 'success');
+      loadReviews();
+    } catch (error) {
+      console.error(error);
+      if (showToast) showToast('Gửi đánh giá thất bại. Vui lòng thử lại.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <section className="section section--alt">
@@ -22,25 +73,71 @@ export default function Testimonials() {
         <p className="section-sub" style={{ marginBottom: 40 }}>
           Hơn 10.000 lượt đánh giá 5 sao trên Google và Zalo.
         </p>
-        <div className="grid-3" style={{ marginBottom: 24 }}>
-          {visible.map((r, i) => (
-            <div key={i} className="review-card card">
-              <div className="review-card__stars">{'★'.repeat(r.stars)}</div>
-              <p className="review-card__text">"{r.text}"</p>
-              <div className="review-card__author">
-                <div className="review-card__avatar">{r.name[0]}</div>
-                <div>
-                  <div className="review-card__name">{r.name}</div>
-                  <div className="review-card__role">{r.role}</div>
-                </div>
+
+        <div className="testi-layout">
+          <form className="review-form card" onSubmit={handleSubmit}>
+            <h3>Gửi đánh giá của bạn</h3>
+            <label>
+              Họ tên
+              <input name="name" value={form.name} onChange={handleChange} placeholder="Nhập họ tên" required />
+            </label>
+            <label>
+              Công việc / Nghề nghiệp
+              <input name="role" value={form.role} onChange={handleChange} placeholder="Ví dụ: Khách hàng cá nhân" />
+            </label>
+            <label className="rating-group">
+              Đánh giá sao
+              <div className="rating-stars">
+                {[1, 2, 3, 4, 5].map(value => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`rating-star ${form.stars >= value ? 'active' : ''}`}
+                    onClick={() => handleStars(value)}
+                    aria-label={`${value} sao`}
+                  >
+                    ★
+                  </button>
+                ))}
               </div>
+            </label>
+            <label>
+              Nội dung đánh giá
+              <textarea name="text" value={form.text} onChange={handleChange} placeholder="Viết cảm nhận của bạn..." required rows={5} />
+            </label>
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+            </button>
+          </form>
+
+          <div className="reviews-panel">
+            <div className="reviews-header">
+              <h3>Đánh giá mới nhất</h3>
+              <span>{reviews.length} đánh giá hiển thị</span>
             </div>
-          ))}
-        </div>
-        <div className="testi__nav">
-          <button className="testi__btn" disabled={start === 0} onClick={() => setStart(s => Math.max(0, s - 3))}>←</button>
-          <span>{Math.floor(start / 3) + 1} / {Math.ceil(REVIEWS.length / 3)}</span>
-          <button className="testi__btn" disabled={start + 3 >= REVIEWS.length} onClick={() => setStart(s => Math.min(REVIEWS.length - 3, s + 3))}>→</button>
+
+            {loading ? (
+              <p>Đang tải đánh giá…</p>
+            ) : reviews.length === 0 ? (
+              <p>Chưa có đánh giá nào. Hãy là người đầu tiên gửi phản hồi!</p>
+            ) : (
+              <div className="grid-3 reviews-grid">
+                {reviews.map(review => (
+                  <div key={review.id} className="review-card card">
+                    <div className="review-card__stars">{'★'.repeat(review.stars || 5)}</div>
+                    <p className="review-card__text">"{review.text}"</p>
+                    <div className="review-card__author">
+                      <div className="review-card__avatar">{review.name.charAt(0)}</div>
+                      <div>
+                        <div className="review-card__name">{review.name}</div>
+                        <div className="review-card__role">{review.role}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

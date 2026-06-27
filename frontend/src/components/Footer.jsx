@@ -50,17 +50,14 @@ export default function Footer() {
             <h5>Liên hệ</h5>
             <ul>
               <li>📞 <a href="tel:0329537532">0329 537 532</a></li>
-              <li>📞 <a href="tel:0978202606">0978 202 606</a></li>
-              <li>✉️ Đang cập nhật</li>
-              <li>📍 Đang cập nhật</li>
+              <li>✉️ <a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></li>
+              <li>📍 Xã Trường Tây, phường Long Hòa, tỉnh Tây Ninh</li>
             </ul>
           </div>
         </div>
 
         <div className="footer__legal">
           <div className="footer__legal-info">
-            <p><strong>Công ty TNHH Vận tải Taxi Tây Ninh</strong></p>
-            <p>MST: [Đang cập nhật] · GPKD: [Đang cập nhật] · Giấy phép KD vận tải: [Đang cập nhật]</p>
             <p style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
               taxi giá rẻ taxi nhanh chóng taxi an toàn taxi 24/7 taxi Tây Ninh taxi sân bay taxi nội thành taxi công ty taxi cưới taxi sự kiện taxi chuyến dài taxi tiện lợi taxi uy tín taxi giá tốt taxi gọi xe nhanh taxi đúng giờ
             </p>

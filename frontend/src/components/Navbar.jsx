@@ -34,7 +34,7 @@ export default function Navbar() {
         <a href="#hero" className="navbar__logo">
          
           <div>
-            <div className="navbar__logo-name">Taxi Toàn Tây Ninh</div>
+            <div className="navbar__logo-name">Taxi Tây Ninh</div>
             <div className="navbar__logo-sub">Đặt xe 24/7</div>
           </div>
         </a>
@@ -65,7 +65,6 @@ export default function Navbar() {
             <h3>Liên hệ đặt xe</h3>
             <p>Chọn một số bên dưới để gọi trực tiếp.</p>
             <a href="tel:0329537532" className="navbar__phone-link">0329 537 532</a>
-            <a href="tel:0978202606" className="navbar__phone-link">0978 202 606</a>
             <button type="button" className="btn btn-primary" onClick={closeCallModal}>Đóng</button>
           </div>
         </div>

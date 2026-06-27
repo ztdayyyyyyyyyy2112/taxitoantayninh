@@ -50,8 +50,8 @@ export default function Partner({ showToast }) {
             </div>
             <div className="partner__contact-info">
               <p><strong>Phòng Kinh Doanh:</strong></p>
-              <p>📞 <a href="tel:02763888888">0276 388 8888</a></p>
-              <p>✉️ <a href="mailto:kd@taxitaynin.com.vn">kd@taxitaynin.com.vn</a></p>
+              <p>📞 <a href="tel:0329537532">0329 537 532</a></p>
+              <p>✉️ <a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></p>
             </div>
           </div>
           <div className="partner__form card">

@@ -50,7 +50,6 @@ export default function Pricing() {
         <div className="pricing__contact-card">
           <h3>📞 Hotline </h3>
           <a href="tel:0329537532">0329.537.532</a>
-          <a href="tel:0978202606">0978.202.606</a>         
           <p>Hoặc điền biểu mẫu phía trên để được đội ngũ liên hệ báo giá trong thời gian sớm nhất.</p>
         </div>
       </div>

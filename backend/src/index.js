@@ -1,11 +1,47 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+const dataDir = path.resolve(__dirname, '../data');
+const dbPath = path.join(dataDir, 'reviews.db');
+fs.mkdirSync(dataDir, { recursive: true });
+const db = new sqlite3.Database(dbPath, err => {
+  if (err) return console.error('❌ Không thể mở database:', err);
+  console.log('✅ Database reviews đã sẵn sàng ở', dbPath);
+});
+
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    text TEXT NOT NULL,
+    stars INTEGER NOT NULL DEFAULT 5,
+    is_visible INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  db.get('SELECT COUNT(*) AS count FROM reviews', (err, row) => {
+    if (!err && row.count === 0) {
+      const sampleReviews = [
+        { name: 'Nguyễn Thị Mai', role: 'Khách hàng cá nhân', text: 'Đặt xe lúc 3 giờ sáng ra sân bay, tài xế đến đúng 5 phút. Xe sạch, lái xe rất lịch sự. Sẽ dùng lâu dài!', stars: 5 },
+        { name: 'Trần Văn Hùng', role: 'Giám đốc Cty TNHH Phú Cường', text: 'Hợp đồng đưa đón nhân viên 2 năm qua rất hài lòng. Hóa đơn VAT nhanh, quản lý công nợ gọn gàng. Recommend!', stars: 5 },
+        { name: 'Lê Thị Ánh', role: 'Khách du lịch từ TP.HCM', text: 'Về thăm núi Bà Đen, thuê xe 7 chỗ cả ngày. Tài xế biết rõ từng điểm tham quan, rất tận tình. Giá hợp lý.', stars: 5 },
+      ];
+      const stmt = db.prepare('INSERT INTO reviews (name, role, text, stars, is_visible) VALUES (?, ?, ?, ?, 1)');
+      sampleReviews.forEach(r => stmt.run(r.name, r.role, r.text, r.stars));
+      stmt.finalize();
+    }
+  });
+});
 
 // ─── In-memory store for demo ─────────────────────────────────────
 const bookings = [];
@@ -18,6 +54,45 @@ const recruitments = [];
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Taxi Tây Ninh API đang hoạt động' });
+});
+
+// GET /api/reviews - Danh sách đánh giá công khai
+app.get('/api/reviews', (req, res) => {
+  db.all(
+    'SELECT id, name, role, text, stars, created_at FROM reviews WHERE is_visible = 1 ORDER BY created_at DESC',
+    (err, rows) => {
+      if (err) {
+        console.error('[REVIEWS] GET error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi tải đánh giá.' });
+      }
+      res.json({ success: true, data: rows });
+    }
+  );
+});
+
+// POST /api/reviews - Gửi đánh giá mới
+app.post('/api/reviews', (req, res) => {
+  const { name, role, text, stars } = req.body;
+  if (!name || !text) {
+    return res.status(400).json({ success: false, message: 'Vui lòng điền họ tên và nội dung đánh giá.' });
+  }
+
+  let rating = Number(stars);
+  if (Number.isNaN(rating) || rating < 1 || rating > 5) {
+    rating = 5;
+  }
+
+  db.run(
+    'INSERT INTO reviews (name, role, text, stars, is_visible) VALUES (?, ?, ?, ?, 1)',
+    [name.trim(), (role || 'Khách hàng').trim(), text.trim(), rating],
+    function (err) {
+      if (err) {
+        console.error('[REVIEWS] POST error', err);
+        return res.status(500).json({ success: false, message: 'Lỗi khi lưu đánh giá.' });
+      }
+      res.json({ success: true, message: 'Cảm ơn bạn đã gửi đánh giá!', reviewId: this.lastID });
+    }
+  );
 });
 
 // POST /api/booking - Đặt xe

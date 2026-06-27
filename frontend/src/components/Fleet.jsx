@@ -84,7 +84,6 @@ export default function Fleet() {
             <h3>{modalContent.title}</h3>
             <p>{modalContent.text}</p>
             <a href="tel:0329537532" className="fleet-modal__phone-link">📞 0329 537 532</a>
-            <a href="tel:0978202606" className="fleet-modal__phone-link">📞 0978 202 606</a>
             <button type="button" className="btn btn-primary" onClick={closeBookingModal}>Đóng</button>
           </div>
         </div>

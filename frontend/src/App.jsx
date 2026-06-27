@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -50,7 +50,7 @@ export default function App() {
         <Fleet />
         <Pricing />
         <About />
-        <Testimonials />
+        <Testimonials showToast={showToast} />
         <Contact showToast={showToast} />
       </main>
       <Footer />
@@ -96,14 +96,6 @@ export default function App() {
               <span>📞</span>
               <div>
                 <strong>0329 537 532</strong>
-                <small>Hotline 1</small>
-              </div>
-            </a>
-            <a href="tel:0978202606" className="phone-option">
-              <span>📞</span>
-              <div>
-                <strong>0978 202 606</strong>
-                <small>Hotline 2</small>
               </div>
             </a>
           </div>

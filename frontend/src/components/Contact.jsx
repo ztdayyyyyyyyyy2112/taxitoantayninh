@@ -17,22 +17,20 @@ export default function Contact() {
             <div className="contact__info-block">
               <h4>📞 Hotline đặt xe</h4>
               <a href="tel:0329537532" className="contact__hotline">0329 537 532</a>
-              <a href="tel:0978202606" className="contact__hotline">0978 202 606</a>
               <p>Hoạt động 24/7 · hỗ trợ đặt xe tức thì</p>
             </div>
             <div className="contact__info-block">
               <h4>📞 Khiếu nại & phản hồi</h4>
               <a href="tel:0329537532" className="contact__hotline contact__hotline--small">0329 537 532</a>
-              <a href="tel:0978202606" className="contact__hotline contact__hotline--small">0978 202 606</a>
               <p>Thứ 2 – Thứ 7 · 7:00 – 21:00</p>
             </div>
             <div className="contact__info-block">
               <h4>✉️ Email</h4>
-              <p>Đang cập nhật</p>
+              <p><a href="mailto:huynhlong2410@gmail.com">huynhlong2410@gmail.com</a></p>
             </div>
             <div className="contact__info-block">
               <h4>📍 Văn phòng chính</h4>
-              <p>Đang cập nhật</p>
+              <p>Xã Trường Tây, phường Long Hòa, tỉnh Tây Ninh</p>
             </div>
           </div>
 

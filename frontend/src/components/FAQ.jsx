@@ -18,7 +18,7 @@ export default function FAQ() {
       <div className="container">
         <div className="section-label">Hỏi đáp</div>
         <h2 className="section-title">Câu hỏi thường gặp</h2>
-        <p className="section-sub" style={{ marginBottom: 50 }}>Không tìm thấy câu trả lời? Gọi 0329.537.532 / 0978.202.606 để được hỗ trợ ngay.</p>
+        <p className="section-sub" style={{ marginBottom: 50 }}>Không tìm thấy câu trả lời? Gọi 0329.537.532 để được hỗ trợ ngay.</p>
         <div className="faq-list">
           {FAQS.map((f, i) => (
             <div key={i} className={`faq-item${open === i ? ' faq-item--open' : ''}`}>

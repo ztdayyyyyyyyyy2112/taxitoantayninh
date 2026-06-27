@@ -76,7 +76,6 @@ export default function Services() {
               {modalContent.title !== 'Không còn xe trống cho dịch vụ này' && (
                 <>
                   <a href="tel:0329537532" className="svc-modal__phone-link">📞 0329 537 532</a>
-                  <a href="tel:0978202606" className="svc-modal__phone-link">📞 0978 202 606</a>
                 </>
               )}
               <button type="button" className="btn btn-primary" onClick={closeModal}>Đóng</button>
