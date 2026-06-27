@@ -34,6 +34,16 @@
 .reviews-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
 .reviews-header span { color: #607489; font-size: .9rem; }
 .reviews-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.review-toggle-btn {
+  margin-top: 20px;
+  border: none;
+  background: transparent;
+  color: var(--navy);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.review-toggle-btn:hover { color: var(--gold-dk); }
 
 @media (min-width: 900px) {
   .reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

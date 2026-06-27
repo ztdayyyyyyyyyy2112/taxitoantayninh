@@ -7,6 +7,7 @@ export default function Testimonials({ showToast }) {
   const [form, setForm] = useState({ name: '', role: '', text: '', stars: 5 });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   const loadReviews = async () => {
     try {
@@ -66,6 +67,8 @@ export default function Testimonials({ showToast }) {
     }
   };
 
+  const visibleReviews = showAllReviews ? reviews : reviews.slice(0, 3);
+
   return (
     <section className="section section--alt">
       <div className="container">
@@ -114,7 +117,7 @@ export default function Testimonials({ showToast }) {
           <div className="reviews-panel">
             <div className="reviews-header">
               <h3>Đánh giá mới nhất</h3>
-              <span>{reviews.length} đánh giá hiển thị</span>
+              <span>{showAllReviews ? `${reviews.length} đánh giá` : `${Math.min(reviews.length, 3)} / ${reviews.length} đánh giá`}</span>
             </div>
 
             {loading ? (
@@ -122,21 +125,32 @@ export default function Testimonials({ showToast }) {
             ) : reviews.length === 0 ? (
               <p>Chưa có đánh giá nào. Hãy là người đầu tiên gửi phản hồi!</p>
             ) : (
-              <div className="grid-3 reviews-grid">
-                {reviews.map(review => (
-                  <div key={review.id} className="review-card card">
-                    <div className="review-card__stars">{'★'.repeat(review.stars || 5)}</div>
-                    <p className="review-card__text">"{review.text}"</p>
-                    <div className="review-card__author">
-                      <div className="review-card__avatar">{review.name.charAt(0)}</div>
-                      <div>
-                        <div className="review-card__name">{review.name}</div>
-                        <div className="review-card__role">{review.role}</div>
+              <>
+                <div className="grid-3 reviews-grid">
+                  {visibleReviews.map(review => (
+                    <div key={review.id} className="review-card card">
+                      <div className="review-card__stars">{'★'.repeat(review.stars || 5)}</div>
+                      <p className="review-card__text">"{review.text}"</p>
+                      <div className="review-card__author">
+                        <div className="review-card__avatar">{review.name.charAt(0)}</div>
+                        <div>
+                          <div className="review-card__name">{review.name}</div>
+                          <div className="review-card__role">{review.role}</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+                {reviews.length > 3 && (
+                  <button
+                    type="button"
+                    className="review-toggle-btn"
+                    onClick={() => setShowAllReviews(prev => !prev)}
+                  >
+                    {showAllReviews ? 'Thu gọn' : 'Xem thêm'}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
