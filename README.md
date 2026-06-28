@@ -80,10 +80,33 @@ Các tính năng đã có
 
  Biến môi trường
 
-Frontend: tạo file `.env` trong thư mục `frontend/`:
+Frontend: tạo file `.env` trong thư mục `frontend/` để phát triển local nếu cần.
 ```
-REACT_APP_API_URL=http://localhost:5000
+VITE_API_URL=
 ```
+
+- Khi deploy frontend và backend riêng biệt, đặt `VITE_API_URL` bằng URL public của backend.
+- Ví dụ: `VITE_API_URL=https://taxi-tayninh-backend.onrender.com`
+
+Backend: tạo file `.env` trong thư mục `backend/` với giá trị mẫu:
+```
+PORT=5000
+ADMIN_USER=taxitayninh12
+ADMIN_PASS=Taxi@001133
+CORS_ORIGIN=https://taxitoantayninh.vercel.app
+DATABASE_PATH=./data/reviews.db
+```
+
+### Deploy backend riêng
+Backend phải được deploy trên một host Node public như Render, Railway, Fly hoặc Heroku. Sau khi deploy xong, lấy URL backend và cấu hình `VITE_API_URL` trên Vercel.
+
+### Deploy frontend lên Vercel
+1. Chỉ deploy thư mục `frontend/`.
+2. Trong Vercel Project Settings > Environment Variables, thêm:
+   - Name: `VITE_API_URL`
+   - Value: `https://<your-backend-url>`
+   - Environment: `Production`
+3. Redeploy frontend.
 
 ---
 
